@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>City</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<style>
+      .container{
+          margin-top: 50px;
+      }
+      .card{
+          width: 50% !important;
+      }
+  </style>
+<body>
+
+<div class="container d-flex justify-content-center">
+    <div class="card">
+        <h5 class="card-header">
+            <div class="row">
+                <div class="col-md-9">
+                    City Search
+                </div>
+                <div class="col-md-3">
+                    <a href="/" style="text-decoration: none; font-size : 14px">Back to home</a>
+                </div>
+            </div>
+        </h5>
+        <div class="card-body">
+            <form>
+                <div class="row">
+                    <div class="form-group col-md-9">
+                        <input type="text" class="form-control" id="cityname" placeholder="Search by city name..." name="cityname">
+                        <p id="errorMsg" style="color: red; font-size : 13px;"></p>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary" id="searchButton">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="container d-flex justify-content-center">
+    <div class="card">
+        <h5 class="card-header">Result According City</h5>
+        <div class="card-body">
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-md-6">Min Temp</div>
+                    <div class="col-md-2">:</div>
+                    <div class="col-md-4" id="min_temp">No Data Found</div>
+                </div>   
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-md-6">Max Temp</div>
+                    <div class="col-md-2">:</div>
+                    <div class="col-md-4" id="max_temp">No Data Found</div>
+                </div>   
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-md-6">Wind Speed</div>
+                    <div class="col-md-2">:</div>
+                    <div class="col-md-4" id="wind_speed">No Data Found</div>
+                </div>   
+            </li>
+        </div>
+    </div>
+</div>
+
+</body>
+<script type="text/javascript">
+    let searchButtonId = document.getElementById('searchButton');
+    let inputCityName = document.getElementById('cityname');
+    let errorMessage = document.getElementById('errorMsg');
+    let minTemp = document.getElementById('min_temp');
+    let maxTemp = document.getElementById('max_temp');
+    let windSpeedId = document.getElementById('wind_speed');
+    let minTemperature;
+    let maxTemperature;
+    let windSpeed;
+    
+    const getInfo = async (event) =>{
+        event.preventDefault();
+        let inputCityNameVal = inputCityName.value;
+        if(inputCityNameVal != ''){
+            errorMessage.innerText = '';
+            let apiURL = `http://api.openweathermap.org/data/2.5/weather?q=${inputCityNameVal}&units=metric&appid=672f5660ce5200e58773bd3f77474e95`;
+            try{
+                const getData = await fetch(apiURL);
+                let mainData = await getData.json();
+                minTemperature = mainData.main.temp_max+"&degC";
+                maxTemperature = mainData.main.temp_min+"&degC";
+                windSpeed = mainData.wind.speed+"&degC";
+            }catch(error){
+                minTemperature = "unKnown";
+                maxTemperature = "unKnown";
+                windSpeed = "unKnown";
+            }
+            minTemp.innerHTML = minTemperature;
+            maxTemp.innerHTML = maxTemperature;
+            windSpeedId.innerHTML = windSpeed;
+        }else{
+            errorMessage.innerText = 'Search field is required.';
+        }
+    }
+    searchButtonId.addEventListener('click', getInfo);
+</script>
+</html>
